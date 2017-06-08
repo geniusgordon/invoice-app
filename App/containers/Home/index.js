@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -35,40 +35,62 @@ const styles = StyleSheet.create({
     width: Screen.width,
     backgroundColor: 'white',
   },
-  panelContainer: {
+  leftRightPanelContainer: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     width: Screen.width * 3,
     flexDirection: 'row',
   },
+  bottomPanelContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    height: Screen.height * 2,
+  },
 });
 
-const Home = () => {
-  return (
-    <View style={styles.container}>
-      <Scanner />
-      <Interactable.View
-        horizontalOnly={true}
-        snapPoints={[
-          { x: 0 },
-          { x: -Screen.width, tension: 500, damping: 0.5 },
-          { x: -Screen.width * 2 },
-        ]}
-        initialPosition={{ x: -Screen.width }}
-        boundaries={{ left: -Screen.width * 2, right: 0 }}
-        style={styles.panelContainer}
-      >
-        <View style={styles.panel}>
-          <History />
-        </View>
-        <View style={{ flex: 1 }} />
-        <View style={styles.panel}>
-          <Account />
-        </View>
-      </Interactable.View>
-    </View>
-  );
-};
+class Home extends Component {
+  handleInvoiceRead = qrcodes => {
+    console.log(qrcodes);
+  };
+  render() {
+    return (
+      <View style={styles.container}>
+        <Scanner onInvoiceRead={this.handleInvoiceRead} />
+        <Interactable.View
+          horizontalOnly
+          snapPoints={[
+            { x: 0 },
+            { x: -Screen.width, tension: 500, damping: 0.5 },
+            { x: -Screen.width * 2 },
+          ]}
+          initialPosition={{ x: -Screen.width }}
+          boundaries={{ left: -Screen.width * 2, right: 0 }}
+          style={styles.leftRightPanelContainer}
+        >
+          <View style={styles.panel}>
+            <History />
+          </View>
+          <View style={{ flex: 1 }} />
+          <View style={styles.panel}>
+            <Account />
+          </View>
+        </Interactable.View>
+        <Interactable.View
+          verticalOnly
+          snapPoints={[{ y: 0 }, { y: Screen.height }]}
+          initialPosition={{ y: 0 }}
+          boundaries={{ top: 0, bottom: Screen.height }}
+          style={styles.bottomPanelContainer}
+        >
+          <View style={styles.panel}>
+            <Text>QQ</Text>
+          </View>
+        </Interactable.View>
+      </View>
+    );
+  }
+}
 
 export default Home;

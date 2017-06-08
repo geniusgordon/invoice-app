@@ -18,37 +18,52 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: GREEN,
   },
+  mask: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  nonScanArea: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, .5)',
+  },
+  scanArea: {
+    flex: 1,
+  },
 });
 
 class Scanner extends Component {
-  state = {
-    qrcodes: {},
+  static defaultProps = {
+    onInvoiceRead: () => {},
   };
-  handleBarCodeRead = e => {
-    if (this.state.qrcodes[e.data]) {
+  state = {
+    qrcodes: [],
+  };
+  componentDidUpdate(prevProps, prevState) {
+    const qrcodes = Object.values(this.state.qrcodes);
+    if (qrcodes.length === 2) {
+      this.props.onInvoiceRead(qrcodes);
+    }
+  }
+  handleBarCodeRead = qrcodes => {
+    if (this.state.qrcodes.length !== 0) {
       return;
     }
-    this.setState({
-      qrcodes: {
-        ...this.state.qrcodes,
-        [e.data]: e,
-      },
-    });
+    this.setState({ qrcodes });
   };
   renderQRCodeBounds = () => {
     const { height, width } = Dimensions.get('window');
-    const qrcodes = Object.values(this.state.qrcodes);
-    return qrcodes.map(qrcode => {
-      const bounds = JSON.parse(qrcode.bounds);
+    const { qrcodes } = this.state;
+    return qrcodes.map(({ data, bounds }, i) => {
       const qrcodePositionStyle = {
         top: height * bounds[1][1],
-        left: width * bounds[0][0],
+        left: width * bounds[0][0] + width / 2 * i,
         height: height * (bounds[0][1] - bounds[1][1]),
         width: width * (bounds[2][0] - bounds[0][0]),
       };
-      return (
-        <View key={qrcode.data} style={[styles.qrcode, qrcodePositionStyle]} />
-      );
+      return <View key={data} style={[styles.qrcode, qrcodePositionStyle]} />;
     });
   };
   render() {
@@ -59,7 +74,13 @@ class Scanner extends Component {
           onBarCodeRead={this.handleBarCodeRead}
           style={styles.camera}
         />
-        {this.renderQRCodeBounds()}
+        <View style={styles.mask}>
+          <View style={styles.nonScanArea} />
+          <View style={styles.scanArea}>
+            {this.renderQRCodeBounds()}
+          </View>
+          <View style={styles.nonScanArea} />
+        </View>
       </View>
     );
   }
