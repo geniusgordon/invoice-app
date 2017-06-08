@@ -1,33 +1,38 @@
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Button, Icon } from 'react-native-elements';
 import Camera from 'react-native-camera';
+import { GREEN, BLACK } from '../../constants/colors';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'skyblue',
+    backgroundColor: BLACK,
   },
   camera: {
-    height: 200,
+    height: 250,
   },
   qrcode: {
     position: 'absolute',
-    borderWidth: 3,
-    borderColor: 'green',
+    borderWidth: 5,
+    borderColor: GREEN,
   },
 });
 
 class QRCodeScanner extends Component {
   static navigationOptions = {
-    tabBarIcon: ({ tintColor }) => (
-      <Icon name="camera" size={40} color={tintColor} />
-    ),
+    header: null,
   };
   state = {
+    showCamera: false,
     qrcodes: {},
   };
+  componentDidMount() {
+    requestAnimationFrame(() => {
+      this.setState({ showCamera: true });
+    });
+  }
   handleBarCodeRead = e => {
     if (this.state.qrcodes[e.data]) {
       return;
@@ -56,14 +61,21 @@ class QRCodeScanner extends Component {
     });
   };
   render() {
+    const { showCamera } = this.state;
     return (
       <View style={styles.container}>
-        <Camera
-          barCodeTypes={['qr']}
-          onBarCodeRead={this.handleBarCodeRead}
-          style={styles.camera}
-        />
+        <View style={styles.container} />
+        {showCamera
+          ? <Camera
+              barCodeTypes={['qr']}
+              onBarCodeRead={this.handleBarCodeRead}
+              style={styles.camera}
+            />
+          : <View style={styles.camera} />}
         {this.renderQRCodeBounds()}
+        <View style={styles.container}>
+          <Button title="手動輸入" />
+        </View>
       </View>
     );
   }

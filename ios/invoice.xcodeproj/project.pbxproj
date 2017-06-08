@@ -47,6 +47,7 @@
 		B414CC2C86F2469FBE729685 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CABC8C22F81418DAF3116D3 /* SimpleLineIcons.ttf */; };
 		5AB9009089944D458CE0940C /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 153F6A05B1B64EA3A5262746 /* Zocial.ttf */; };
 		133B8643BB5C4F9C8141902B /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB92D7DEC85045799AFF1511 /* libRCTCamera.a */; };
+		2DEF017F220B453E8824CB32 /* libInteractable.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B8A367FE9954CAFB1825DF0 /* libInteractable.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -280,6 +281,8 @@
 		153F6A05B1B64EA3A5262746 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		AF4F7C28C12348A68BFE6019 /* RCTCamera.xcodeproj */ = {isa = PBXFileReference; name = "RCTCamera.xcodeproj"; path = "../node_modules/react-native-camera/ios/RCTCamera.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		EB92D7DEC85045799AFF1511 /* libRCTCamera.a */ = {isa = PBXFileReference; name = "libRCTCamera.a"; path = "libRCTCamera.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		8B0110AE6CD642AD9448A0E4 /* Interactable.xcodeproj */ = {isa = PBXFileReference; name = "Interactable.xcodeproj"; path = "../node_modules/react-native-interactable/ios/Interactable.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		9B8A367FE9954CAFB1825DF0 /* libInteractable.a */ = {isa = PBXFileReference; name = "libInteractable.a"; path = "libInteractable.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -308,6 +311,7 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				D1B77EA2738A44A987C8DDB9 /* libRNVectorIcons.a in Frameworks */,
 				133B8643BB5C4F9C8141902B /* libRCTCamera.a in Frameworks */,
+				2DEF017F220B453E8824CB32 /* libInteractable.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,6 +480,7 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				597FCDC95FB84496804AAB12 /* RNVectorIcons.xcodeproj */,
 				AF4F7C28C12348A68BFE6019 /* RCTCamera.xcodeproj */,
+				8B0110AE6CD642AD9448A0E4 /* Interactable.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1033,11 +1038,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/react-native-interactable/ios/Interactable",
 				);
 			};
 			name = Debug;
@@ -1059,11 +1066,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/react-native-interactable/ios/Interactable",
 				);
 			};
 			name = Release;
@@ -1087,6 +1096,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/react-native-interactable/ios/Interactable",
 				);
 			};
 			name = Debug;
@@ -1109,6 +1119,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/react-native-interactable/ios/Interactable",
 				);
 			};
 			name = Release;
@@ -1139,11 +1150,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/react-native-interactable/ios/Interactable",
 				);
 			};
 			name = Debug;
@@ -1174,11 +1187,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
+					"$(SRCROOT)/../node_modules/react-native-interactable/ios/Interactable",
 				);
 			};
 			name = Release;
@@ -1204,6 +1219,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1228,6 +1244,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
