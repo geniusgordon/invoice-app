@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     backgroundColor: BLACK,
   },
   camera: {
-    height: 250,
+    flex: 1,
   },
   qrcode: {
     position: 'absolute',
@@ -20,19 +20,10 @@ const styles = StyleSheet.create({
   },
 });
 
-class QRCodeScanner extends Component {
-  static navigationOptions = {
-    header: null,
-  };
+class Scanner extends Component {
   state = {
-    showCamera: false,
     qrcodes: {},
   };
-  componentDidMount() {
-    requestAnimationFrame(() => {
-      this.setState({ showCamera: true });
-    });
-  }
   handleBarCodeRead = e => {
     if (this.state.qrcodes[e.data]) {
       return;
@@ -61,24 +52,17 @@ class QRCodeScanner extends Component {
     });
   };
   render() {
-    const { showCamera } = this.state;
     return (
       <View style={styles.container}>
-        <View style={styles.container} />
-        {showCamera
-          ? <Camera
-              barCodeTypes={['qr']}
-              onBarCodeRead={this.handleBarCodeRead}
-              style={styles.camera}
-            />
-          : <View style={styles.camera} />}
+        <Camera
+          barCodeTypes={['qr']}
+          onBarCodeRead={this.handleBarCodeRead}
+          style={styles.camera}
+        />
         {this.renderQRCodeBounds()}
-        <View style={styles.container}>
-          <Button title="手動輸入" />
-        </View>
       </View>
     );
   }
 }
 
-export default QRCodeScanner;
+export default Scanner;
