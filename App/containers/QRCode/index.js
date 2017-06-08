@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Camera from 'react-native-camera';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
     backgroundColor: 'skyblue',
   },
   camera: {
-    flex: 1,
+    height: 200,
   },
   qrcode: {
     position: 'absolute',
@@ -19,7 +21,9 @@ const styles = StyleSheet.create({
 
 class QRCodeScanner extends Component {
   static navigationOptions = {
-    header: null,
+    tabBarIcon: ({ tintColor }) => (
+      <Icon name="camera" size={40} color={tintColor} />
+    ),
   };
   state = {
     qrcodes: {},
