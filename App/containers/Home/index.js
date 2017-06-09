@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Interactable from 'react-native-interactable';
+import Invoice from './Invoice';
 import History from '../History';
 import Account from '../Account';
 import Scanner from '../Scanner';
@@ -48,11 +43,24 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: Screen.height * 2,
   },
+  options: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 16,
+  },
 });
 
 class Home extends Component {
+  state = {};
   handleInvoiceRead = qrcodes => {
     console.log(qrcodes);
+  };
+  handleKeyboardIconPress = () => {
+    if (this.bottomPanel) {
+      this.bottomPanel.snapTo({ index: 0 });
+    }
   };
   render() {
     return (
@@ -77,15 +85,26 @@ class Home extends Component {
             <Account />
           </View>
         </Interactable.View>
+        <View style={styles.options}>
+          <Icon
+            name="keyboard"
+            color="white"
+            size={48}
+            onPress={this.handleKeyboardIconPress}
+          />
+        </View>
         <Interactable.View
           verticalOnly
           snapPoints={[{ y: 0 }, { y: Screen.height }]}
-          initialPosition={{ y: 0 }}
+          initialPosition={{ y: Screen.height }}
           boundaries={{ top: 0, bottom: Screen.height }}
           style={styles.bottomPanelContainer}
+          ref={ref => {
+            this.bottomPanel = ref;
+          }}
         >
           <View style={styles.panel}>
-            <Text>QQ</Text>
+            <Invoice />
           </View>
         </Interactable.View>
       </View>
