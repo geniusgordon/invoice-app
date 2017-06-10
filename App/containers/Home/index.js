@@ -70,9 +70,22 @@ class Home extends Component {
   };
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    this.horizontalAnimated.addListener(e => {
+      if (e.value < -Screen.width * 1.5) {
+        this.setState({ screen: 2 });
+      } else if (
+        e.value > -Screen.width * 1.5 &&
+        e.value < -Screen.width * 0.5
+      ) {
+        this.setState({ screen: 1 });
+      } else if (e.value > -Screen.width * 0.5) {
+        this.setState({ screen: 0 });
+      }
+    });
   }
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    this.horizontalAnimated.removeAllListeners();
   }
   handleBackPress = () => {
     if (this.state.screen === 3 && this.verticalPanel) {
@@ -92,9 +105,6 @@ class Home extends Component {
       this.verticalPanel.snapTo({ index: 0 });
     }
   };
-  handleHorizontalSnap = e => {
-    this.setState({ screen: e.nativeEvent.index });
-  };
   handleVerticalSnap = e => {
     if (e.nativeEvent.index === 0) {
       this.setState({
@@ -107,9 +117,6 @@ class Home extends Component {
         manualInput: false,
       });
     }
-  };
-  handleHorizontalDrag = e => {
-    console.log(e.nativeEvent.x);
   };
   render() {
     const { screen, manualInput } = this.state;
@@ -124,10 +131,50 @@ class Home extends Component {
       width: Screen.width,
       backgroundColor: animatedBgColor,
     };
+    const toolbarTitleStyle = {
+      opacity: this.horizontalAnimated.interpolate({
+        inputRange: [
+          -Screen.width * 2,
+          -Screen.width * 1.5 - 10,
+          -Screen.width * 1.5 + 10,
+          -Screen.width,
+          -Screen.width * 0.5 - 10,
+          -Screen.width * 0.5 + 10,
+          0,
+        ],
+        outputRange: [1, 0, 0, 1, 0, 0, 1],
+      }),
+    };
+    const optionsStyle = {
+      bottom: this.horizontalAnimated.interpolate({
+        inputRange: [
+          -Screen.width * 2,
+          -Screen.width * 2 + Screen.width / 5,
+          -Screen.width - Screen.width / 5,
+          -Screen.width,
+          -Screen.width + Screen.width / 5,
+          -Screen.width / 5,
+          0,
+        ],
+        outputRange: [
+          0,
+          -Screen.width / 3,
+          -Screen.width / 3,
+          0,
+          -Screen.width / 3,
+          -Screen.width / 3,
+          0,
+        ],
+      }),
+    };
     return (
       <View style={styles.container}>
         <Scanner onInvoiceRead={this.handleInvoiceRead} />
-        <Toolbar title={title} style={toolbarStyle} />
+        <Toolbar
+          title={title}
+          style={toolbarStyle}
+          titleContainerStyle={toolbarTitleStyle}
+        />
         <Animated.View
           style={[styles.mask, { backgroundColor: animatedBgColor }]}
         />
@@ -141,7 +188,6 @@ class Home extends Component {
           initialPosition={{ x: -Screen.width }}
           boundaries={{ left: -Screen.width * 2, right: 0 }}
           animatedValueX={this.horizontalAnimated}
-          onSnap={this.handleHorizontalSnap}
           style={styles.horizontalPanelContainer}
           ref={ref => {
             this.horizontalPanel = ref;
@@ -155,14 +201,14 @@ class Home extends Component {
             <Account />
           </Panel>
         </Interactable.View>
-        <View style={styles.options}>
+        <Animated.View style={[styles.options, optionsStyle]}>
           <Icon
             name="keyboard"
             color="white"
             size={48}
             onPress={this.handleKeyboardIconPress}
           />
-        </View>
+        </Animated.View>
         <Interactable.View
           verticalOnly
           snapPoints={[{ y: 0 }, { y: Screen.height }]}
