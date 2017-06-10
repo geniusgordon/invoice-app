@@ -15,6 +15,7 @@ import Invoice from './Invoice';
 import History from '../History';
 import Account from '../Account';
 import Scanner from '../Scanner';
+import { GREEN, BLUE } from '../../constants/colors';
 
 const Screen = {
   width: Dimensions.get('window').width,
@@ -123,7 +124,7 @@ class Home extends Component {
     const title = getScreenTitle({ screen, manualInput });
     const animatedBgColor = this.horizontalAnimated.interpolate({
       inputRange: [-Screen.width * 2, -Screen.width, 0],
-      outputRange: ['#3F51B5', 'transparent', '#3F51B5'],
+      outputRange: [BLUE, 'transparent', GREEN],
     });
     const toolbarStyle = {
       position: 'absolute',

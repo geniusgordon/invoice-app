@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Picker, StyleSheet, Text, TextInput, View } from 'react-native';
-import { GREY, BLACK } from '../../constants/colors';
+import { Button } from 'react-native-elements';
+import { RED, GREY, BLACK } from '../../constants/colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,8 +41,13 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
   },
   secondSerial: {
-    width: 96,
+    flex: 1,
     fontFamily: 'monospace',
+  },
+  submitButton: {
+    marginTop: 8,
+    marginLeft: 0,
+    marginRight: 0,
   },
 });
 
@@ -155,6 +161,14 @@ class Invoice extends Component {
             }}
           />
         </View>
+        {edit
+          ? <Button
+              title="新增發票"
+              disabled={firstSerial.length < 2 || secondSerial.length < 10}
+              backgroundColor={RED}
+              containerViewStyle={styles.submitButton}
+            />
+          : null}
       </View>
     );
   }
