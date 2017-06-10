@@ -10,6 +10,7 @@ import {
 import { Icon } from 'react-native-elements';
 import Interactable from 'react-native-interactable';
 import Toolbar from './Toolbar';
+import Panel from './Panel';
 import Invoice from './Invoice';
 import History from '../History';
 import Account from '../Account';
@@ -24,29 +25,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  panel: {
-    flex: 1,
-    width: Screen.width,
-    backgroundColor: 'white',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-  },
   horizontalPanelContainer: {
     position: 'absolute',
-    top: Toolbar.HEIGHT,
+    top: 0,
     bottom: 0,
     width: Screen.width * 3,
     flexDirection: 'row',
   },
   verticalPanelContainer: {
     position: 'absolute',
-    top: Toolbar.HEIGHT,
+    top: 0,
     bottom: 0,
     height: Screen.height * 2,
   },
   mask: {
     position: 'absolute',
-    top: Toolbar.HEIGHT,
+    top: Toolbar.height,
     bottom: 0,
     width: Screen.width,
   },
@@ -153,13 +147,13 @@ class Home extends Component {
             this.horizontalPanel = ref;
           }}
         >
-          <View style={styles.panel}>
+          <Panel>
             <History />
-          </View>
+          </Panel>
           <View style={{ flex: 1 }} />
-          <View style={styles.panel}>
+          <Panel>
             <Account />
-          </View>
+          </Panel>
         </Interactable.View>
         <View style={styles.options}>
           <Icon
@@ -180,9 +174,9 @@ class Home extends Component {
             this.verticalPanel = ref;
           }}
         >
-          <View style={styles.panel}>
+          <Panel>
             <Invoice edit={manualInput} />
-          </View>
+          </Panel>
         </Interactable.View>
       </View>
     );

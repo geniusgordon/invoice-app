@@ -1,11 +1,11 @@
 import React from 'react';
 import { Animated, StyleSheet, Text } from 'react-native';
 
-const HEIGHT = 60;
+const height = 60;
 
 const styles = StyleSheet.create({
   container: {
-    height: HEIGHT,
+    height,
     backgroundColor: '#3F51B5',
     flexDirection: 'row',
     alignItems: 'center',
@@ -24,6 +24,6 @@ const Toolbar = ({ title, style, titleStyle }) => (
   </Animated.View>
 );
 
-Toolbar.HEIGHT = HEIGHT;
+Toolbar.height = height;
 
 export default Toolbar;
