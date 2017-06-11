@@ -119,19 +119,34 @@ class Home extends Component {
         screen: 1,
         manualInput: false,
       });
+      if (this.scanner) {
+        this.scanner.clear();
+        this.setState({
+          barCodeInvoice: null,
+          manualInput: false,
+        });
+      }
     }
   };
-  handleInvoiceRead = qrcodes => {
-    const month = parseInt(qrcodes[0].substr(13, 2), 10);
+  handleBarCodeRead = qrcodes => {
+    const { data } = qrcodes[0];
+    const month = parseInt(data.substr(13, 2), 10);
     const invoice = {
-      firstSerial: qrcodes[0].substr(0, 2),
-      secondSerial: qrcodes[0].substr(2, 8),
-      year: qrcodes[0].substr(10, 3),
+      firstSerial: data.substr(0, 2),
+      secondSerial: data.substr(2, 8),
+      year: data.substr(10, 3),
       month: month % 2 === 0
         ? `${padZero(month - 1)}${padZero(month)}`
         : `${padZero(month)}${padZero(month + 1)}`,
     };
     this.props.addInvoice(invoice);
+    this.setState({
+      barCodeInvoice: invoice,
+      manualInput: false,
+    });
+    if (this.verticalPanel) {
+      this.verticalPanel.snapTo({ index: 0 });
+    }
   };
   manualAddInvoice = invoice => {
     if (this.verticalPanel) {
@@ -165,7 +180,7 @@ class Home extends Component {
   };
   render() {
     const { history } = this.props;
-    const { screen, manualInput } = this.state;
+    const { screen, barCodeInvoice, manualInput } = this.state;
     const title = getScreenTitle({ screen, manualInput });
     const backgroundColor = getScreenColor({ screen });
     const opacity = this.horizontalAnimated.interpolate({
@@ -212,7 +227,12 @@ class Home extends Component {
     };
     return (
       <View style={styles.container}>
-        <Scanner onInvoiceRead={this.handleInvoiceRead} />
+        <Scanner
+          onBarCodeRead={this.handleBarCodeRead}
+          ref={ref => {
+            this.scanner = ref;
+          }}
+        />
         <Toolbar title={title} style={toolbarStyle} />
         <Animated.View style={[styles.mask, { backgroundColor, opacity }]} />
         <Interactable.View
@@ -253,7 +273,11 @@ class Home extends Component {
           }}
         >
           <Panel>
-            <Invoice edit={manualInput} addInvoice={this.manualAddInvoice} />
+            <Invoice
+              edit={manualInput}
+              barCodeInvoice={barCodeInvoice}
+              addInvoice={this.manualAddInvoice}
+            />
           </Panel>
         </Interactable.View>
       </View>

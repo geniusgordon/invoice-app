@@ -69,6 +69,20 @@ class Invoice extends Component {
         : `${padZero(today.getMonth())}${padZero(today.getMonth() + 1)}`,
     };
   }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.barCodeInvoice) {
+      const {
+        firstSerial,
+        secondSerial,
+        year,
+        month,
+      } = nextProps.barCodeInvoice;
+      this.setState({ firstSerial, secondSerial, year, month });
+    }
+    if (!this.props.edit && nextProps.edit) {
+      this.clear();
+    }
+  }
   handleFirstSerialChange = text => {
     this.setState({ firstSerial: text });
     if (text.length === 2 && this.secondSerial) {
@@ -90,6 +104,9 @@ class Invoice extends Component {
   handleSubmit = () => {
     const { firstSerial, secondSerial, year, month } = this.state;
     this.props.addInvoice({ firstSerial, secondSerial, year, month });
+    this.clear();
+  };
+  clear = () => {
     this.setState({ firstSerial: '', secondSerial: '' });
   };
   render() {
