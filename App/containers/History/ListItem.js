@@ -31,7 +31,7 @@ const ListItem = ({ firstSerial, secondSerial, year, month, status }) => (
     </View>
     <View>
       <Text style={styles.serial}>{firstSerial} - {secondSerial}</Text>
-      <Text>{year}/{month}</Text>
+      <Text>{year}/{month.substr(0, 2)}-{month.substr(2)} 月</Text>
     </View>
   </View>
 );
