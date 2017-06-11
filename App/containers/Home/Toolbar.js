@@ -18,11 +18,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const Toolbar = ({ title, style, titleContainerStyle }) => (
+const Toolbar = ({ title, style }) => (
   <Animated.View style={[styles.container, style]}>
-    <Animated.View style={titleContainerStyle}>
-      <Text style={styles.title}>{title}</Text>
-    </Animated.View>
+    <Text style={styles.title}>{title}</Text>
   </Animated.View>
 );
 

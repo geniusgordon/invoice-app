@@ -15,7 +15,7 @@ import Invoice from './Invoice';
 import History from '../History';
 import Account from '../Account';
 import Scanner from '../Scanner';
-import { GREEN, BLUE } from '../../constants/colors';
+import { RED, GREEN, BLUE } from '../../constants/colors';
 
 const Screen = {
   width: Dimensions.get('window').width,
@@ -59,6 +59,9 @@ const getScreenTitle = ({ screen, manualInput }) => {
   }
   return manualInput ? '手動輸入' : '掃描結果';
 };
+
+const getScreenColor = ({ screen }) =>
+  [GREEN, 'transparent', BLUE, RED][screen];
 
 class Home extends Component {
   static navigationOptions = {
@@ -104,14 +107,12 @@ class Home extends Component {
   handleKeyboardIconPress = () => {
     if (this.verticalPanel) {
       this.verticalPanel.snapTo({ index: 0 });
+      this.setState({ manualInput: true });
     }
   };
   handleVerticalSnap = e => {
     if (e.nativeEvent.index === 0) {
-      this.setState({
-        screen: 3,
-        manualInput: true,
-      });
+      this.setState({ screen: 3 });
     } else {
       this.setState({
         screen: 1,
@@ -122,29 +123,25 @@ class Home extends Component {
   render() {
     const { screen, manualInput } = this.state;
     const title = getScreenTitle({ screen, manualInput });
-    const animatedBgColor = this.horizontalAnimated.interpolate({
-      inputRange: [-Screen.width * 2, -Screen.width, 0],
-      outputRange: [BLUE, 'transparent', GREEN],
+    const backgroundColor = getScreenColor({ screen });
+    const opacity = this.horizontalAnimated.interpolate({
+      inputRange: [
+        -Screen.width * 2,
+        -Screen.width * 1.5 - 5,
+        -Screen.width * 1.5 + 5,
+        -Screen.width,
+        -Screen.width * 0.5 - 5,
+        -Screen.width * 0.5 + 5,
+        0,
+      ],
+      outputRange: [1, 0, 0, 1, 0, 0, 1],
     });
     const toolbarStyle = {
       position: 'absolute',
       top: 0,
       width: Screen.width,
-      backgroundColor: animatedBgColor,
-    };
-    const toolbarTitleStyle = {
-      opacity: this.horizontalAnimated.interpolate({
-        inputRange: [
-          -Screen.width * 2,
-          -Screen.width * 1.5 - 10,
-          -Screen.width * 1.5 + 10,
-          -Screen.width,
-          -Screen.width * 0.5 - 10,
-          -Screen.width * 0.5 + 10,
-          0,
-        ],
-        outputRange: [1, 0, 0, 1, 0, 0, 1],
-      }),
+      backgroundColor,
+      opacity,
     };
     const optionsStyle = {
       bottom: this.horizontalAnimated.interpolate({
@@ -171,14 +168,8 @@ class Home extends Component {
     return (
       <View style={styles.container}>
         <Scanner onInvoiceRead={this.handleInvoiceRead} />
-        <Toolbar
-          title={title}
-          style={toolbarStyle}
-          titleContainerStyle={toolbarTitleStyle}
-        />
-        <Animated.View
-          style={[styles.mask, { backgroundColor: animatedBgColor }]}
-        />
+        <Toolbar title={title} style={toolbarStyle} />
+        <Animated.View style={[styles.mask, { backgroundColor, opacity }]} />
         <Interactable.View
           horizontalOnly
           snapPoints={[
