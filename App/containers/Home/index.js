@@ -61,7 +61,7 @@ const getScreenTitle = ({ screen, manualInput }) => {
 };
 
 const getScreenColor = ({ screen }) =>
-  [GREEN, 'transparent', BLUE, RED][screen];
+  [GREEN, 'transparent', BLUE, 'transparent'][screen];
 
 class Home extends Component {
   static navigationOptions = {
@@ -104,6 +104,11 @@ class Home extends Component {
   handleInvoiceRead = qrcodes => {
     console.log(qrcodes);
   };
+  handleCameraIconPress = () => {
+    if (this.horizontalPanel) {
+      this.horizontalPanel.snapTo({ index: 1 });
+    }
+  };
   handleKeyboardIconPress = () => {
     if (this.verticalPanel) {
       this.verticalPanel.snapTo({ index: 0 });
@@ -118,6 +123,30 @@ class Home extends Component {
         screen: 1,
         manualInput: false,
       });
+    }
+  };
+  renderOptions = () => {
+    const { screen, manualInput } = this.state;
+    if (screen === 0) {
+      return (
+        <Icon
+          reverse
+          name="camera"
+          color={RED}
+          onPress={this.handleCameraIconPress}
+        />
+      );
+    }
+    if (screen === 1) {
+      return (
+        <Icon
+          name="keyboard"
+          color="white"
+          size={48}
+          underlayColor="transparent"
+          onPress={this.handleKeyboardIconPress}
+        />
+      );
     }
   };
   render() {
@@ -144,6 +173,7 @@ class Home extends Component {
       opacity,
     };
     const optionsStyle = {
+      alignItems: 'center',
       bottom: this.horizontalAnimated.interpolate({
         inputRange: [
           -Screen.width * 2,
@@ -194,12 +224,7 @@ class Home extends Component {
           </Panel>
         </Interactable.View>
         <Animated.View style={[styles.options, optionsStyle]}>
-          <Icon
-            name="keyboard"
-            color="white"
-            size={48}
-            onPress={this.handleKeyboardIconPress}
-          />
+          {this.renderOptions()}
         </Animated.View>
         <Interactable.View
           verticalOnly
