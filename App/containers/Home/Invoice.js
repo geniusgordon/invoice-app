@@ -69,6 +69,20 @@ class Invoice extends Component {
         : `${padZero(today.getMonth())}${padZero(today.getMonth() + 1)}`,
     };
   }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.barCodeInvoice) {
+      const {
+        firstSerial,
+        secondSerial,
+        year,
+        month,
+      } = nextProps.barCodeInvoice;
+      this.setState({ firstSerial, secondSerial, year, month });
+    }
+    if (!this.props.edit && nextProps.edit) {
+      this.clear();
+    }
+  }
   handleFirstSerialChange = text => {
     this.setState({ firstSerial: text });
     if (text.length === 2 && this.secondSerial) {
@@ -77,12 +91,23 @@ class Invoice extends Component {
   };
   handleSecondSerialChange = text => {
     this.setState({ secondSerial: text });
+    if (text.length === 8 && this.secondSerial) {
+      this.secondSerial.blur();
+    }
   };
   handleYearChange = year => {
     this.setState({ year });
   };
   handleMonthChange = month => {
     this.setState({ month });
+  };
+  handleSubmit = () => {
+    const { firstSerial, secondSerial, year, month } = this.state;
+    this.props.addInvoice({ firstSerial, secondSerial, year, month });
+    this.clear();
+  };
+  clear = () => {
+    this.setState({ firstSerial: '', secondSerial: '' });
   };
   render() {
     const { edit } = this.props;
@@ -153,7 +178,7 @@ class Invoice extends Component {
             value={secondSerial}
             editable={edit}
             keyboardType="numeric"
-            maxLength={10}
+            maxLength={8}
             underlineColorAndroid="transparent"
             onChangeText={this.handleSecondSerialChange}
             ref={ref => {
@@ -164,8 +189,9 @@ class Invoice extends Component {
         {edit
           ? <Button
               title="新增發票"
-              disabled={firstSerial.length < 2 || secondSerial.length < 10}
+              disabled={firstSerial.length < 2 || secondSerial.length < 8}
               backgroundColor={RED}
+              onPress={this.handleSubmit}
               containerViewStyle={styles.submitButton}
             />
           : null}

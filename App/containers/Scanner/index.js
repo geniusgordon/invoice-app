@@ -41,17 +41,12 @@ class Scanner extends Component {
   state = {
     qrcodes: [],
   };
-  componentDidUpdate(prevProps, prevState) {
-    const qrcodes = Object.values(this.state.qrcodes);
-    if (qrcodes.length === 2) {
-      this.props.onInvoiceRead(qrcodes);
-    }
-  }
   handleBarCodeRead = qrcodes => {
     if (this.state.qrcodes.length !== 0) {
       return;
     }
     this.setState({ qrcodes });
+    this.props.onBarCodeRead(qrcodes);
   };
   renderQRCodeBounds = () => {
     const { height, width } = Dimensions.get('window');
@@ -65,6 +60,9 @@ class Scanner extends Component {
       };
       return <View key={data} style={[styles.qrcode, qrcodePositionStyle]} />;
     });
+  };
+  clear = () => {
+    this.setState({ qrcodes: [] });
   };
   render() {
     return (
