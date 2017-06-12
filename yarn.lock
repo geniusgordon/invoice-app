@@ -3155,6 +3155,10 @@ react-native-elements@^0.12.2:
     react-native-side-menu "^0.20.1"
     react-native-tab-navigator "^0.3.3"
 
+react-native-fbsdk@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-fbsdk/-/react-native-fbsdk-0.6.0.tgz#08fdc00e9ca777f724a70029a5b1c3794b49b882"
+
 react-native-interactable@^0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/react-native-interactable/-/react-native-interactable-0.0.9.tgz#d1d6fcb3e608688d14316d816f032dc9fd5c06e0"

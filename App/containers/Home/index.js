@@ -3,6 +3,7 @@ import { AsyncStorage, Text, View } from 'react-native';
 import firebase from 'firebase';
 import sortBy from 'lodash/fp/sortBy';
 import Home from './Home';
+import { login, logout } from '../../auth';
 import { checkPrize } from '../../utils';
 
 class HomeContainer extends Component {
@@ -12,10 +13,15 @@ class HomeContainer extends Component {
   state = {
     history: {},
     prize: {},
+    user: null,
+    loggingIn: false,
   };
   componentDidMount() {
     this.getPrizeList();
     this.getHistory();
+    firebase.app().auth().onAuthStateChanged(user => {
+      this.setState({ user, loggingIn: false });
+    });
   }
   getPrizeList = async () => {
     let prizeList = JSON.parse(await AsyncStorage.getItem('prizeList'));
@@ -35,6 +41,15 @@ class HomeContainer extends Component {
       this.setState({ history });
     }
   };
+  login = async () => {
+    this.setState({ loggingIn: true });
+    try {
+      await login();
+    } catch (error) {
+      this.setState({ loggingIn: false });
+      console.error(error);
+    }
+  };
   addInvoice = invoice => {
     const { year, month, firstSerial, secondSerial } = invoice;
     const id = year + month + firstSerial + secondSerial;
@@ -51,6 +66,7 @@ class HomeContainer extends Component {
     });
   };
   render() {
+    const { user, loggingIn } = this.state;
     const history = Object.values(this.state.history).sort((a, b) => {
       if (a.year !== b.year) {
         return a.year > b.year ? -1 : 1;
@@ -63,7 +79,16 @@ class HomeContainer extends Component {
       }
       return 1;
     });
-    return <Home history={history} addInvoice={this.addInvoice} />;
+    return (
+      <Home
+        history={history}
+        user={user}
+        loggingIn={loggingIn}
+        login={this.login}
+        logout={logout}
+        addInvoice={this.addInvoice}
+      />
+    );
   }
 }
 

@@ -179,7 +179,7 @@ class Home extends Component {
     }
   };
   render() {
-    const { history } = this.props;
+    const { history, user, loggingIn, login, logout } = this.props;
     const { screen, barCodeInvoice, manualInput } = this.state;
     const title = getScreenTitle({ screen, manualInput });
     const backgroundColor = getScreenColor({ screen });
@@ -255,7 +255,12 @@ class Home extends Component {
           </Panel>
           <View style={{ flex: 1 }} />
           <Panel>
-            <Account />
+            <Account
+              user={user}
+              loggingIn={loggingIn}
+              login={login}
+              logout={logout}
+            />
           </Panel>
         </Interactable.View>
         <Animated.View style={[styles.options, optionsStyle]}>
