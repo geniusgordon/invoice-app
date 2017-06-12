@@ -15,7 +15,7 @@ import Invoice from './Invoice';
 import History from '../History';
 import Account from '../Account';
 import Scanner from '../Scanner';
-import { RED, GREEN, BLUE } from '../../constants/colors';
+import { RED, GREEN, BLUE, AMBER } from '../../constants/colors';
 
 const Screen = {
   width: Dimensions.get('window').width,
@@ -161,7 +161,7 @@ class Home extends Component {
         <Icon
           reverse
           name="camera"
-          color={RED}
+          color={AMBER}
           onPress={this.handleCameraIconPress}
         />
       );

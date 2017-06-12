@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 const History = ({ history }) => (
   <View style={styles.list}>
     {history.map(invoice => (
-      <ListItem key={invoice.secondSerial} {...invoice} />
+      <ListItem key={invoice.id} {...invoice} />
     ))}
   </View>
 );
