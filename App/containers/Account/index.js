@@ -42,7 +42,12 @@ const Account = ({ user, loggingIn, login, logout }) => {
   if (!user) {
     return (
       <View style={styles.container}>
-        <Button title="Facebook 登入" backgroundColor="#3B5998" onPress={login} />
+        <Button
+          disabled={loggingIn}
+          title="Facebook 登入"
+          backgroundColor="#3B5998"
+          onPress={login}
+        />
       </View>
     );
   }

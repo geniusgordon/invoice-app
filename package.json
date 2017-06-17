@@ -16,7 +16,8 @@
 		"react-native-fbsdk": "^0.6.0",
 		"react-native-interactable": "^0.0.9",
 		"react-native-vector-icons": "~4.1.1",
-		"react-navigation": "^1.0.0-beta.11"
+		"react-navigation": "^1.0.0-beta.11",
+		"rxjs": "^5.4.1"
 	},
 	"devDependencies": {
 		"babel-jest": "20.0.3",

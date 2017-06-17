@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Text, View } from 'react-native';
-import firebase from 'firebase';
+import { Text, View } from 'react-native';
+import merge from 'lodash/fp/merge';
 import sortBy from 'lodash/fp/sortBy';
+import Rx from 'rxjs/Rx';
 import Home from './Home';
-import { login, logout } from '../../auth';
-import { checkPrize } from '../../utils';
+import { firebase, prize, storage } from '../../lib';
 
 class HomeContainer extends Component {
   static navigationOptions = {
@@ -19,41 +19,52 @@ class HomeContainer extends Component {
   componentDidMount() {
     this.getPrizeList();
     this.getHistory();
-    firebase.app().auth().onAuthStateChanged(user => {
+    firebase.auth.stream.subscribe(user => {
       this.setState({ user, loggingIn: false });
     });
   }
-  getPrizeList = async () => {
-    let prizeList = JSON.parse(await AsyncStorage.getItem('prizeList'));
-    if (!prizeList) {
-      const database = firebase.app().database();
-      const snapshot = await database.ref('/prizeList').once('value');
-      prizeList = snapshot.val();
-      await AsyncStorage.setItem('prizeList', JSON.stringify(prizeList));
-    }
-    if (prizeList) {
-      this.setState({ prizeList });
-    }
+  getPrizeList = () => {
+    const hasPrizeList = Rx.Observable
+      .from(storage.getItem('prizeList'))
+      .partition(prizeList => prizeList);
+    const fetchAndSavePrizeList = firebase.database
+      .createObservable({ path: '/prizeList' })
+      .mergeMap(prizeList =>
+        storage.setItem('prizeList', prizeList).then(() => prizeList),
+      );
+    hasPrizeList[0]
+      .merge(hasPrizeList[1].mergeMapTo(fetchAndSavePrizeList))
+      .subscribe(prizeList => {
+        this.setState({ prizeList });
+      });
   };
-  getHistory = async () => {
-    let history = JSON.parse(await AsyncStorage.getItem('history'));
-    if (history) {
-      this.setState({ history });
-    }
+  getHistory = () => {
+    const localHistory = Rx.Observable.from(storage.getItem('history'));
+    const fetchHistory = firebase.auth.stream
+      .filter(user => user)
+      .distinctUntilChanged()
+      .mergeMap(user =>
+        firebase.database.createObservable({ path: `/history/${user.uid}` }),
+      );
+    localHistory.merge(fetchHistory).subscribe(history => {
+      if (history) {
+        this.setState(state => ({
+          history: merge(state.history, history),
+        }));
+      }
+    });
   };
-  login = async () => {
+  login = () => {
     this.setState({ loggingIn: true });
-    try {
-      await login();
-    } catch (error) {
-      this.setState({ loggingIn: false });
-      console.error(error);
-    }
+    return firebase.auth
+      .login()
+      .catch(error => console.error(error))
+      .then(() => this.setState({ loggingIn: false }));
   };
   addInvoice = invoice => {
     const { year, month, firstSerial, secondSerial } = invoice;
     const id = year + month + firstSerial + secondSerial;
-    const prize = checkPrize(this.state.prizeList, invoice);
+    const prize = prize.checkPrize(this.state.prizeList, invoice);
     this.setState(state => {
       const nextState = {
         history: {
@@ -85,7 +96,7 @@ class HomeContainer extends Component {
         user={user}
         loggingIn={loggingIn}
         login={this.login}
-        logout={logout}
+        logout={firebase.auth.logout}
         addInvoice={this.addInvoice}
       />
     );
