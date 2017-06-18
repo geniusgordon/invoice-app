@@ -39,20 +39,44 @@ class HomeContainer extends Component {
       });
   };
   getHistory = () => {
-    const localHistory = Rx.Observable.from(storage.getItem('history'));
-    const fetchHistory = firebase.auth.stream
-      .filter(user => user)
-      .distinctUntilChanged()
-      .mergeMap(user =>
-        firebase.database.createObservable({ path: `/history/${user.uid}` }),
+    Rx.Observable
+      .from(storage.getItem('history'))
+      .do(history =>
+        this.setState(state => ({ history: merge(state.history, history) })),
+      )
+      .map(history => history || {})
+      .combineLatest(
+        firebase.auth.stream.filter(user => user).distinctUntilChanged(),
+      )
+      .mergeMap(([history, user]) => {
+        const synced = Object.values(history).filter(invoice => invoice.synced);
+        const unSynced = Object.values(history).filter(
+          invoice => !invoice.synced,
+        );
+        const fetchHistory = synced.length === 0
+          ? firebase.database.createObservable({
+              path: `/history/${user.uid}`,
+            })
+          : Rx.Observable.empty();
+        const syncHistory = Rx.Observable
+          .from(
+            Promise.all(
+              unSynced.map(invoice => {
+                const syncedInvoice = { ...invoice, synced: true };
+                return firebase.database
+                  .update(`/history/${user.uid}/${invoice.id}`, syncedInvoice)
+                  .then(() => syncedInvoice);
+              }),
+            ),
+          )
+          .map(history =>
+            history.reduce((acc, val) => ({ ...acc, [val.id]: val }), {}),
+          );
+        return fetchHistory.merge(syncHistory);
+      })
+      .subscribe(history =>
+        this.setState(state => ({ history: merge(state.history, history) })),
       );
-    localHistory.merge(fetchHistory).subscribe(history => {
-      if (history) {
-        this.setState(state => ({
-          history: merge(state.history, history),
-        }));
-      }
-    });
   };
   login = () => {
     this.setState({ loggingIn: true });
@@ -64,17 +88,32 @@ class HomeContainer extends Component {
   addInvoice = invoice => {
     const { year, month, firstSerial, secondSerial } = invoice;
     const id = year + month + firstSerial + secondSerial;
-    const prize = prize.checkPrize(this.state.prizeList, invoice);
+    const invoicePrize = prize.checkPrize(this.state.prizeList, invoice);
+    const newInvoice = { id, ...invoice, prize: invoicePrize, synced: false };
     this.setState(state => {
       const nextState = {
         history: {
           ...state.history,
-          [id]: { id, ...invoice, prize },
+          [id]: newInvoice,
         },
       };
-      AsyncStorage.setItem('history', JSON.stringify(nextState.history));
+      storage.setItem('history', nextState.history);
       return nextState;
     });
+    const { user } = this.state;
+    if (user) {
+      const syncedInvoice = { ...newInvoice, synced: true };
+      firebase.database
+        .update(`/history/${user.uid}/${id}`, syncedInvoice)
+        .then(() => {
+          this.setState(state => ({
+            history: {
+              ...state.history,
+              [id]: syncedInvoice,
+            },
+          }));
+        });
+    }
   };
   render() {
     const { user, loggingIn } = this.state;
