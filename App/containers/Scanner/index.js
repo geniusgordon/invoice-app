@@ -35,9 +35,6 @@ const styles = StyleSheet.create({
 });
 
 class Scanner extends Component {
-  static defaultProps = {
-    onInvoiceRead: () => {},
-  };
   state = {
     qrcodes: [],
   };

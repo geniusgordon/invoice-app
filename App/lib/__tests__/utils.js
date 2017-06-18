@@ -1,4 +1,4 @@
-import { checkPrize } from '../prize';
+import { checkPrize } from '../utils';
 
 const allPrizeList = {
   '10604': {

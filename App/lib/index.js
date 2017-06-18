@@ -1,5 +1,5 @@
 import * as firebase from './firebase';
-import * as prize from './prize';
 import * as storage from './storage';
+import * as utils from './utils';
 
-export { firebase, prize, storage };
+export { firebase, storage, utils };

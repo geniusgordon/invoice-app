@@ -4,7 +4,7 @@ import merge from 'lodash/fp/merge';
 import sortBy from 'lodash/fp/sortBy';
 import Rx from 'rxjs/Rx';
 import Home from './Home';
-import { firebase, prize, storage } from '../../lib';
+import { firebase, utils, storage } from '../../lib';
 
 class HomeContainer extends Component {
   static navigationOptions = {
@@ -45,9 +45,7 @@ class HomeContainer extends Component {
         this.setState(state => ({ history: merge(state.history, history) })),
       )
       .map(history => history || {})
-      .combineLatest(
-        firebase.auth.stream.filter(user => user).distinctUntilChanged(),
-      )
+      .combineLatest(firebase.auth.stream.filter(user => user))
       .mergeMap(([history, user]) => {
         const synced = Object.values(history).filter(invoice => invoice.synced);
         const unSynced = Object.values(history).filter(
@@ -88,7 +86,7 @@ class HomeContainer extends Component {
   addInvoice = invoice => {
     const { year, month, firstSerial, secondSerial } = invoice;
     const id = year + month + firstSerial + secondSerial;
-    const invoicePrize = prize.checkPrize(this.state.prizeList, invoice);
+    const invoicePrize = utils.checkPrize(this.state.prizeList, invoice);
     const newInvoice = { id, ...invoice, prize: invoicePrize, synced: false };
     this.setState(state => {
       const nextState = {
@@ -100,20 +98,22 @@ class HomeContainer extends Component {
       storage.setItem('history', nextState.history);
       return nextState;
     });
-    const { user } = this.state;
-    if (user) {
-      const syncedInvoice = { ...newInvoice, synced: true };
-      firebase.database
-        .update(`/history/${user.uid}/${id}`, syncedInvoice)
-        .then(() => {
-          this.setState(state => ({
-            history: {
-              ...state.history,
-              [id]: syncedInvoice,
-            },
-          }));
-        });
-    }
+    const syncedInvoice = { ...newInvoice, synced: true };
+    firebase.auth.stream
+      .filter(user => user)
+      .mergeMap(user =>
+        firebase.database
+          .update(`/history/${user.uid}/${id}`, syncedInvoice)
+          .then(() => {
+            this.setState(state => ({
+              history: {
+                ...state.history,
+                [id]: syncedInvoice,
+              },
+            }));
+          }),
+      )
+      .subscribe();
   };
   render() {
     const { user, loggingIn } = this.state;

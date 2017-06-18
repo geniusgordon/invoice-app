@@ -3,6 +3,7 @@ import {
   Animated,
   BackHandler,
   Dimensions,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -16,6 +17,7 @@ import History from '../History';
 import Account from '../Account';
 import Scanner from '../Scanner';
 import { RED, GREEN, BLUE, AMBER } from '../../constants/colors';
+import { utils } from '../../lib';
 
 const Screen = {
   width: Dimensions.get('window').width,
@@ -63,7 +65,7 @@ const getScreenTitle = ({ screen, manualInput }) => {
 const getScreenColor = ({ screen }) =>
   [GREEN, 'transparent', BLUE, 'transparent'][screen];
 
-const padZero = n => (n < 10 ? '0' + n : '' + n);
+const getToolbarColor = ({ screen }) => [GREEN, RED, BLUE, RED][screen];
 
 class Home extends Component {
   horizontalAnimated = new Animated.Value(1);
@@ -129,16 +131,7 @@ class Home extends Component {
     }
   };
   handleBarCodeRead = qrcodes => {
-    const { data } = qrcodes[0];
-    const month = parseInt(data.substr(13, 2), 10);
-    const invoice = {
-      firstSerial: data.substr(0, 2),
-      secondSerial: data.substr(2, 8),
-      year: data.substr(10, 3),
-      month: month % 2 === 0
-        ? `${padZero(month - 1)}${padZero(month)}`
-        : `${padZero(month)}${padZero(month + 1)}`,
-    };
+    const invoice = utils.parseInvoiceBarCode(qrcodes);
     this.props.addInvoice(invoice);
     this.setState({
       barCodeInvoice: invoice,
@@ -182,7 +175,8 @@ class Home extends Component {
     const { history, user, loggingIn, login, logout } = this.props;
     const { screen, barCodeInvoice, manualInput } = this.state;
     const title = getScreenTitle({ screen, manualInput });
-    const backgroundColor = getScreenColor({ screen });
+    const screenColor = getScreenColor({ screen });
+    const toolbarColor = getToolbarColor({ screen });
     const opacity = this.horizontalAnimated.interpolate({
       inputRange: [
         -Screen.width * 2,
@@ -199,7 +193,7 @@ class Home extends Component {
       position: 'absolute',
       top: 0,
       width: Screen.width,
-      backgroundColor,
+      backgroundColor: toolbarColor,
       opacity,
     };
     const optionsStyle = {
@@ -227,6 +221,7 @@ class Home extends Component {
     };
     return (
       <View style={styles.container}>
+        <StatusBar backgroundColor={toolbarColor} />
         <Scanner
           onBarCodeRead={this.handleBarCodeRead}
           ref={ref => {
@@ -234,7 +229,9 @@ class Home extends Component {
           }}
         />
         <Toolbar title={title} style={toolbarStyle} />
-        <Animated.View style={[styles.mask, { backgroundColor, opacity }]} />
+        <Animated.View
+          style={[styles.mask, { backgroundColor: screenColor, opacity }]}
+        />
         <Interactable.View
           horizontalOnly
           snapPoints={[

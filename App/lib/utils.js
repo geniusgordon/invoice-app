@@ -1,5 +1,7 @@
 import flatten from 'lodash/fp/flatten';
 
+const padZero = n => (n < 10 ? '0' + n : '' + n);
+
 const prizes = (() => {
   const superPrize = [
     {
@@ -64,4 +66,35 @@ export const checkPrize = (allPrizeList, invoice) => {
     }
   }
   return { prize: null, amount: 0 };
+};
+
+export const parseInvoiceBarCode = qrcodes => {
+  const data = qrcodes[0].data + qrcodes[1].data.substr(2);
+  const detail = data.substr(89).split(':');
+  const count = parseInt(detail[0], 10);
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    items.push({
+      name: detail[(i + 1) * 3],
+      quantity: parseInt(detail[(i + 1) * 3 + 1], 10),
+      unitPrice: parseInt(detail[(i + 1) * 3 + 2], 10),
+    });
+  }
+
+  const month = parseInt(data.substr(13, 2), 10);
+  return {
+    firstSerial: data.substr(0, 2),
+    secondSerial: data.substr(2, 8),
+    year: data.substr(10, 3),
+    month: month % 2 === 0
+      ? `${padZero(month - 1)}${padZero(month)}`
+      : `${padZero(month)}${padZero(month + 1)}`,
+    day: data.substr(15, 2),
+    random: data.substr(17, 4),
+    amount: parseInt(data.substr(21, 8), 16),
+    amountWithTax: parseInt(data.substr(29, 8), 16),
+    buyer: data.substr(37, 8),
+    seller: data.substr(45, 8),
+    items,
+  };
 };
