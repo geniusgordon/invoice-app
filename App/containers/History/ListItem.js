@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { RED, PURPLE, BROWN, GREY, BLACK } from '../../constants/colors';
+import { RED, GREEN, GREY, BLACK } from '../../constants/colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,14 +28,14 @@ const styles = StyleSheet.create({
 });
 
 const prizeColor = {
-  super: PURPLE,
+  super: RED,
   special: RED,
   first: RED,
   second: RED,
-  third: RED,
-  fourth: BROWN,
-  fifth: BROWN,
-  sixth: BROWN,
+  third: GREEN,
+  fourth: GREEN,
+  fifth: GREEN,
+  sixth: GREEN,
 };
 
 const prizeName = {

@@ -16,7 +16,7 @@ import Invoice from './Invoice';
 import History from '../History';
 import Account from '../Account';
 import Scanner from '../Scanner';
-import { RED, GREEN, BLUE, AMBER } from '../../constants/colors';
+import { RED, GREEN, BLUE, BLACK } from '../../constants/colors';
 import { utils } from '../../lib';
 
 const Screen = {
@@ -63,9 +63,9 @@ const getScreenTitle = ({ screen, manualInput }) => {
 };
 
 const getScreenColor = ({ screen }) =>
-  [GREEN, 'transparent', BLUE, 'transparent'][screen];
+  [BLUE, 'transparent', BLUE, GREEN][screen];
 
-const getToolbarColor = ({ screen }) => [GREEN, RED, BLUE, RED][screen];
+const getToolbarColor = ({ screen }) => [BLUE, GREEN, BLUE, GREEN][screen];
 
 class Home extends Component {
   horizontalAnimated = new Animated.Value(1);
@@ -154,7 +154,7 @@ class Home extends Component {
         <Icon
           reverse
           name="camera"
-          color={AMBER}
+          color={RED}
           onPress={this.handleCameraIconPress}
         />
       );
@@ -228,7 +228,7 @@ class Home extends Component {
             this.scanner = ref;
           }}
         />
-        <Toolbar title={title} style={toolbarStyle} />
+        <Toolbar title={title} toolbarStyle={toolbarStyle} />
         <Animated.View
           style={[styles.mask, { backgroundColor: screenColor, opacity }]}
         />

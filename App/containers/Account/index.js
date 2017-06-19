@@ -24,17 +24,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: BLACK,
   },
-  loginText: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-  },
-  loggingIn: {
-    marginLeft: 8,
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+  loginBtn: {
+    borderRadius: 32,
   },
 });
 
@@ -43,9 +34,12 @@ const Account = ({ user, loggingIn, login, logout }) => {
     return (
       <View style={styles.container}>
         <Button
+          large
           disabled={loggingIn}
           title="Facebook 登入"
           backgroundColor="#3B5998"
+          borderRadius={32}
+          containerViewStyle={styles.loginBtn}
           onPress={login}
         />
       </View>
@@ -57,7 +51,14 @@ const Account = ({ user, loggingIn, login, logout }) => {
         <Image style={styles.avatar} source={{ uri: user.photoURL }} />
         <Text style={styles.username}>{user.displayName}</Text>
       </View>
-      <Button title="登出" backgroundColor={RED} onPress={logout} />
+      <Button
+        large
+        title="登出"
+        backgroundColor={RED}
+        borderRadius={32}
+        containerViewStyle={styles.loginBtn}
+        onPress={logout}
+      />
     </View>
   );
 };
