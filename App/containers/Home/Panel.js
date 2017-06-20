@@ -1,18 +1,12 @@
 import React from 'react';
 import {
-  Dimensions,
   Platform,
   StatusBar,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
-import Toolbar from './Toolbar';
-
-const Screen = {
-  width: Dimensions.get('window').width,
-  height: Dimensions.get('window').height,
-};
+import { Screen, Toolbar } from '../../components';
 
 if (Platform.OS === 'ios') {
   StatusBar.currentHeight = 20;
@@ -33,19 +27,19 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     minHeight: Screen.height - Toolbar.height - StatusBar.currentHeight,
+    height: 1000,
   },
 });
 
-const Panel = ({ children }) => (
+const Panel = ({ children }) =>
   <View style={styles.panel}>
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.scrollViewContent}>
         <View style={styles.content}>
           {children}
         </View>
       </View>
     </ScrollView>
-  </View>
-);
+  </View>;
 
 export default Panel;

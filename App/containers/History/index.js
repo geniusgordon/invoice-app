@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, Vibration, View } from 'react-native';
 import ListItem from './ListItem';
-import { GREEN } from '../../constants/colors';
-
-const Screen = {
-  width: Dimensions.get('window').width,
-  height: Dimensions.get('window').height,
-};
+import { Screen } from '../../components';
+import { BLUE } from '../../constants/colors';
 
 const styles = StyleSheet.create({
   list: {
@@ -17,7 +13,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    backgroundColor: GREEN,
+    backgroundColor: BLUE,
   },
   emptyText: {
     padding: 16,
@@ -38,20 +34,39 @@ const styles = StyleSheet.create({
   },
 });
 
-const History = ({ history }) => {
+const selectedCount = selected => Object.values(selected).filter(s => s).length;
+
+const History = ({ history, selected, onHistorySelect }) => {
   if (history.length === 0) {
     return (
       <View style={styles.empty}>
         <View style={styles.focusContainer}>
-          <Text style={styles.emptyText}>你還沒有任何發票，來新增你的第一張</Text>
+          <Text style={styles.emptyText}>新增你的第一張發票</Text>
           <View style={styles.focus} />
         </View>
       </View>
     );
   }
+  const count = selectedCount(selected);
   return (
     <View style={styles.list}>
-      {history.map(invoice => <ListItem key={invoice.id} {...invoice} />)}
+      {history.map(invoice =>
+        <ListItem
+          key={invoice.id}
+          selected={selected[invoice.id]}
+          selectedCount={count}
+          invoice={invoice}
+          onPress={() => {
+            if (count > 0) {
+              onHistorySelect(invoice);
+            }
+          }}
+          onLongPress={() => {
+            Vibration.vibrate(30);
+            onHistorySelect(invoice);
+          }}
+        />,
+      )}
     </View>
   );
 };

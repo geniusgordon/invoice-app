@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Animated,
   BackHandler,
-  Dimensions,
   StatusBar,
   StyleSheet,
   Text,
@@ -10,19 +9,16 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Interactable from 'react-native-interactable';
-import Toolbar from './Toolbar';
+import LinearGradient from 'react-native-linear-gradient';
+import ElevatedView from 'react-native-elevated-view';
 import Panel from './Panel';
 import Invoice from './Invoice';
 import History from '../History';
 import Account from '../Account';
 import Scanner from '../Scanner';
-import { RED, GREEN, BLUE, BLACK } from '../../constants/colors';
+import { Screen, Toolbar } from '../../components';
+import { RED, GREEN, BLUE, ORANGE, GREY, BLACK } from '../../constants/colors';
 import { utils } from '../../lib';
-
-const Screen = {
-  width: Dimensions.get('window').width,
-  height: Dimensions.get('window').height,
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -53,7 +49,31 @@ const styles = StyleSheet.create({
     bottom: 0,
     padding: 16,
   },
+  selectedOptions: {
+    height: 64,
+    width: Screen.width - 32,
+    borderRadius: 5,
+    paddingLeft: 16,
+    paddingRight: 16,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  selectedCount: {
+    flex: 1,
+    paddingLeft: 16,
+    fontSize: 16,
+    color: BLACK,
+  },
+  shadow: {
+    position: 'absolute',
+    bottom: 0,
+    height: 96,
+    width: Screen.width,
+  },
 });
+
+const selectedCount = selected => Object.values(selected).filter(s => s).length;
 
 const getScreenTitle = ({ screen, manualInput }) => {
   if (screen < 3) {
@@ -62,10 +82,15 @@ const getScreenTitle = ({ screen, manualInput }) => {
   return manualInput ? '手動輸入' : '掃描結果';
 };
 
-const getScreenColor = ({ screen }) =>
-  [BLUE, 'transparent', BLUE, GREEN][screen];
+const getScreenColor = ({ screen, selected }) =>
+  screen === 0 && selectedCount(selected) > 0
+    ? ORANGE
+    : [BLUE, 'transparent', BLUE, GREEN][screen];
 
-const getToolbarColor = ({ screen }) => [BLUE, GREEN, BLUE, GREEN][screen];
+const getToolbarColor = ({ screen, selected }) =>
+  screen === 0 && selectedCount(selected) > 0
+    ? ORANGE
+    : [BLUE, GREEN, BLUE, GREEN][screen];
 
 class Home extends Component {
   horizontalAnimated = new Animated.Value(1);
@@ -148,16 +173,36 @@ class Home extends Component {
     this.props.addInvoice(invoice);
   };
   renderOptions = () => {
+    const { selected, clearSelected, deleteSelected } = this.props;
     const { screen, manualInput } = this.state;
+    const count = selectedCount(selected);
     if (screen === 0) {
-      return (
-        <Icon
-          reverse
-          name="camera"
-          color={RED}
-          onPress={this.handleCameraIconPress}
-        />
-      );
+      if (count === 0) {
+        return (
+          <Icon
+            reverse
+            name="camera"
+            color={RED}
+            onPress={this.handleCameraIconPress}
+          />
+        );
+      }
+      return [
+        <LinearGradient
+          key="shadow"
+          colors={['transparent', GREY]}
+          style={styles.shadow}
+        />,
+        <ElevatedView
+          key="options"
+          elevation={1}
+          style={styles.selectedOptions}
+        >
+          <Icon name="close" onPress={clearSelected} />
+          <Text style={styles.selectedCount}>{count} items</Text>
+          <Icon name="delete" onPress={deleteSelected} />
+        </ElevatedView>,
+      ];
     }
     if (screen === 1) {
       return (
@@ -172,11 +217,20 @@ class Home extends Component {
     }
   };
   render() {
-    const { history, user, loggingIn, login, logout } = this.props;
+    const {
+      history,
+      selected,
+      user,
+      loggingIn,
+      login,
+      logout,
+      onHistorySelect,
+    } = this.props;
     const { screen, barCodeInvoice, manualInput } = this.state;
     const title = getScreenTitle({ screen, manualInput });
-    const screenColor = getScreenColor({ screen });
-    const toolbarColor = getToolbarColor({ screen });
+    const screenColor = getScreenColor({ screen, selected });
+    const toolbarColor = getToolbarColor({ screen, selected });
+    const count = selectedCount(selected);
     const opacity = this.horizontalAnimated.interpolate({
       inputRange: [
         -Screen.width * 2,
@@ -248,7 +302,11 @@ class Home extends Component {
           }}
         >
           <Panel>
-            <History history={history} />
+            <History
+              history={history}
+              selected={selected}
+              onHistorySelect={onHistorySelect}
+            />
           </Panel>
           <View style={{ flex: 1 }} />
           <Panel>

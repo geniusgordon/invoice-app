@@ -1,12 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { RED, GREEN, GREY, BLACK } from '../../constants/colors';
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Touchable } from '../../components';
+import { RED, GREEN, GREY, LIGHT_GREY, BLACK } from '../../constants/colors';
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8,
-    height: 64,
+    height: 72,
+    alignItems: 'center',
+    paddingLeft: 16,
+    paddingRight: 16,
     flexDirection: 'row',
+    backgroundColor: 'white',
   },
   mid: {
     flex: 1,
@@ -15,7 +19,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 32,
-    marginRight: 8,
+    marginRight: 16,
     color: 'white',
     backgroundColor: GREY,
     textAlign: 'center',
@@ -76,26 +80,41 @@ const getAmountStr = amount => {
   return `${amount} 台幣`;
 };
 
-const ListItem = ({ firstSerial, secondSerial, year, month, prize }) => {
+const ListItem = ({
+  invoice,
+  selected,
+  selectedCount,
+  onPress,
+  onLongPress,
+}) => {
+  const { firstSerial, secondSerial, year, month, prize } = invoice;
   const status = getPrizeStatus(prize);
   const color = getPrizeColor(prize);
+  const Container = selectedCount > 0 ? TouchableWithoutFeedback : Touchable;
   return (
-    <View style={styles.container}>
-      <View>
-        <Text style={[styles.status, { backgroundColor: color }]}>
-          {status}
-        </Text>
+    <Container onPress={onPress} onLongPress={onLongPress}>
+      <View
+        style={[
+          styles.container,
+          selected ? { backgroundColor: LIGHT_GREY } : null,
+        ]}
+      >
+        <View>
+          <Text style={[styles.status, { backgroundColor: color }]}>
+            {status}
+          </Text>
+        </View>
+        <View style={styles.mid}>
+          <Text style={styles.serial}>{firstSerial} - {secondSerial}</Text>
+          <Text>{year}/{month.substr(0, 2)}-{month.substr(2)} 月</Text>
+        </View>
+        {prize && prize.prize
+          ? <View>
+              <Text>{getAmountStr(prize.amount)}</Text>
+            </View>
+          : null}
       </View>
-      <View style={styles.mid}>
-        <Text style={styles.serial}>{firstSerial} - {secondSerial}</Text>
-        <Text>{year}/{month.substr(0, 2)}-{month.substr(2)} 月</Text>
-      </View>
-      {prize && prize.prize
-        ? <View>
-            <Text>{getAmountStr(prize.amount)}</Text>
-          </View>
-        : null}
-    </View>
+    </Container>
   );
 };
 

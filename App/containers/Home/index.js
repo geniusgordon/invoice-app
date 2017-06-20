@@ -12,6 +12,7 @@ class HomeContainer extends Component {
   };
   state = {
     history: {},
+    selected: {},
     prize: {},
     user: null,
     loggingIn: false,
@@ -115,8 +116,23 @@ class HomeContainer extends Component {
       )
       .subscribe();
   };
+  handleHistorySelect = invoice => {
+    this.setState(state => ({
+      selected: {
+        ...state.selected,
+        [invoice.id]: !state.selected[invoice.id],
+      },
+    }));
+  };
+  clearSelected = () => {
+    this.setState({
+      selected: {},
+    });
+  };
+  deleteSelected = () => {
+  };
   render() {
-    const { user, loggingIn } = this.state;
+    const { selected, user, loggingIn } = this.state;
     const history = Object.values(this.state.history).sort((a, b) => {
       if (a.year !== b.year) {
         return a.year > b.year ? -1 : 1;
@@ -132,11 +148,15 @@ class HomeContainer extends Component {
     return (
       <Home
         history={history}
+        selected={selected}
         user={user}
         loggingIn={loggingIn}
         login={this.login}
         logout={firebase.auth.logout}
         addInvoice={this.addInvoice}
+        onHistorySelect={this.handleHistorySelect}
+        clearSelected={this.clearSelected}
+        deleteSelected={this.deleteSelected}
       />
     );
   }
