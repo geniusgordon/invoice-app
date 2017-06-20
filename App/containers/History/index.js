@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, Vibration, View } from 'react-native';
+import { Icon } from 'react-native-elements';
 import ListItem from './ListItem';
 import { Screen } from '../../components';
-import { BLUE } from '../../constants/colors';
+import { GREY } from '../../constants/colors';
 
 const styles = StyleSheet.create({
   list: {
@@ -13,24 +14,12 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    backgroundColor: BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   emptyText: {
-    padding: 16,
     fontSize: 16,
-  },
-  focusContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: -50,
-    alignItems: 'center',
-  },
-  focus: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'white',
+    color: GREY,
   },
 });
 
@@ -40,10 +29,8 @@ const History = ({ history, selected, onHistorySelect }) => {
   if (history.length === 0) {
     return (
       <View style={styles.empty}>
-        <View style={styles.focusContainer}>
-          <Text style={styles.emptyText}>新增你的第一張發票</Text>
-          <View style={styles.focus} />
-        </View>
+        <Icon name="view-list" size={64} color={GREY} />
+        <Text style={styles.emptyText}>No items</Text>
       </View>
     );
   }

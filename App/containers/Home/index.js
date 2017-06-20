@@ -49,9 +49,11 @@ class HomeContainer extends Component {
       .map(history => history || {})
       .combineLatest(firebase.auth.stream.filter(user => user))
       .mergeMap(([history, user]) => {
-        const synced = Object.values(history).filter(invoice => invoice.synced);
+        const synced = Object.values(history).filter(
+          invoice => invoice && invoice.synced,
+        );
         const unSynced = Object.values(history).filter(
-          invoice => !invoice.synced,
+          invoice => invoice && !invoice.synced,
         );
         const fetchHistory = synced.length === 0
           ? firebase.database.createObservable({
