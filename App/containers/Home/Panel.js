@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     minHeight: Screen.height - Toolbar.height - StatusBar.currentHeight,
-    height: 1000,
   },
 });
 

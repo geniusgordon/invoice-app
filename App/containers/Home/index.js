@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import merge from 'lodash/fp/merge';
 import sortBy from 'lodash/fp/sortBy';
+import mapValues from 'lodash/mapValues';
 import Rx from 'rxjs/Rx';
 import Home from './Home';
 import { firebase, utils, storage } from '../../lib';
@@ -74,7 +75,11 @@ class HomeContainer extends Component {
         return fetchHistory.merge(syncHistory);
       })
       .subscribe(history =>
-        this.setState(state => ({ history: merge(state.history, history) })),
+        this.setState(state => {
+          const nextState = { history: merge(state.history, history) };
+          storage.setItem('history', nextState.history);
+          return nextState;
+        }),
       );
   };
   login = () => {
@@ -83,6 +88,25 @@ class HomeContainer extends Component {
       .login()
       .catch(error => console.error(error))
       .then(() => this.setState({ loggingIn: false }));
+  };
+  _sync = (user, history) => {
+    return firebase.database
+      .update(`/history/${user.uid}`, history)
+      .then(() => {
+        this.setState(state => ({
+          history: merge(state.history, history),
+        }));
+      });
+  };
+  sync = history => {
+    if (this.state.user) {
+      this._sync(this.state.user, history);
+    }
+    firebase.auth.stream
+      .filter(user => user)
+      .take(1)
+      .mergeMap(user => this._sync(user, history))
+      .subscribe();
   };
   addInvoice = invoice => {
     const { year, month, firstSerial, secondSerial } = invoice;
@@ -99,22 +123,7 @@ class HomeContainer extends Component {
       storage.setItem('history', nextState.history);
       return nextState;
     });
-    const syncedInvoice = { ...newInvoice, synced: true };
-    firebase.auth.stream
-      .filter(user => user)
-      .mergeMap(user =>
-        firebase.database
-          .update(`/history/${user.uid}/${id}`, syncedInvoice)
-          .then(() => {
-            this.setState(state => ({
-              history: {
-                ...state.history,
-                [id]: syncedInvoice,
-              },
-            }));
-          }),
-      )
-      .subscribe();
+    this.sync({ [id]: { ...newInvoice, synced: true } });
   };
   handleHistorySelect = invoice => {
     this.setState(state => ({
@@ -130,21 +139,40 @@ class HomeContainer extends Component {
     });
   };
   deleteSelected = () => {
+    this.setState(state => {
+      const { history, selected } = state;
+      const deletedHistory = mapValues(
+        selected,
+        (value, key) => (value ? null : history[key]),
+      );
+      const nextState = {
+        selected: {},
+        history: mapValues(
+          history,
+          (value, key) => (selected[key] ? undefined : value),
+        ),
+      };
+      storage.setItem('history', nextState.history);
+      this.sync(deletedHistory);
+      return nextState;
+    });
   };
   render() {
     const { selected, user, loggingIn } = this.state;
-    const history = Object.values(this.state.history).sort((a, b) => {
-      if (a.year !== b.year) {
-        return a.year > b.year ? -1 : 1;
-      }
-      if (a.month !== b.month) {
-        return a.month > b.month ? -1 : 1;
-      }
-      if (a.firstSerial + a.secondSerial < b.firstSerial + b.secondSerial) {
-        return -1;
-      }
-      return 1;
-    });
+    const history = Object.values(this.state.history)
+      .filter(invoice => invoice)
+      .sort((a, b) => {
+        if (a.year !== b.year) {
+          return a.year > b.year ? -1 : 1;
+        }
+        if (a.month !== b.month) {
+          return a.month > b.month ? -1 : 1;
+        }
+        if (a.firstSerial + a.secondSerial < b.firstSerial + b.secondSerial) {
+          return -1;
+        }
+        return 1;
+      });
     return (
       <Home
         history={history}
