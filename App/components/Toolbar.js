@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, StyleSheet, Text } from 'react-native';
 
-const height = 60;
+const height = 56;
 
 const styles = StyleSheet.create({
   container: {
@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const Toolbar = ({ title, style }) => (
-  <Animated.View style={[styles.container, style]}>
-    <Text style={styles.title}>{title}</Text>
+const Toolbar = ({ title, toolbarStyle, titleStyle }) => (
+  <Animated.View style={[styles.container, toolbarStyle]}>
+    <Text style={[styles.title, titleStyle]}>{title}</Text>
   </Animated.View>
 );
 

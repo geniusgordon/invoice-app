@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, Vibration, View } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import Camera from 'react-native-camera';
 import { GREEN, BLACK } from '../../constants/colors';
@@ -35,9 +35,6 @@ const styles = StyleSheet.create({
 });
 
 class Scanner extends Component {
-  static defaultProps = {
-    onInvoiceRead: () => {},
-  };
   state = {
     qrcodes: [],
   };
@@ -47,6 +44,7 @@ class Scanner extends Component {
     }
     this.setState({ qrcodes });
     this.props.onBarCodeRead(qrcodes);
+    Vibration.vibrate(100);
   };
   renderQRCodeBounds = () => {
     const { height, width } = Dimensions.get('window');

@@ -1,5 +1,3 @@
-import firebase from 'firebase';
-
 const config = {
   apiKey: 'AIzaSyABZr-h-QDPUWmbFFTrRRWZtPjxE8iKQb0',
   authDomain: 'invoice-90382.firebaseapp.com',
@@ -9,4 +7,4 @@ const config = {
   messagingSenderId: '996792669391',
 };
 
-firebase.initializeApp(config);
+export default config;

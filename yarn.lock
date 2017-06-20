@@ -3155,9 +3155,21 @@ react-native-elements@^0.12.2:
     react-native-side-menu "^0.20.1"
     react-native-tab-navigator "^0.3.3"
 
+react-native-elevated-view@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-elevated-view/-/react-native-elevated-view-0.0.4.tgz#a92ba76ef62c1fc8f31e3097df8972c4acbf3868"
+
+react-native-fbsdk@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-fbsdk/-/react-native-fbsdk-0.6.0.tgz#08fdc00e9ca777f724a70029a5b1c3794b49b882"
+
 react-native-interactable@^0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/react-native-interactable/-/react-native-interactable-0.0.9.tgz#d1d6fcb3e608688d14316d816f032dc9fd5c06e0"
+
+react-native-linear-gradient@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.0.0.tgz#7442c00e1fcd9fca329119dcbaf744d12bcd1b5a"
 
 react-native-side-menu@^0.20.1:
   version "0.20.1"
@@ -3539,6 +3551,12 @@ rx@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/rx/-/rx-4.1.0.tgz#a5f13ff79ef3b740fe30aa803fb09f98805d4782"
 
+rxjs@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.4.1.tgz#b62f757f279445d265a18a58fb0a70dc90e91626"
+  dependencies:
+    symbol-observable "^1.0.1"
+
 safe-buffer@^5.0.1:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.0.tgz#fe4c8460397f9eaaaa58e73be46273408a45e223"
@@ -3815,6 +3833,10 @@ supports-color@^3.1.2:
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-3.2.3.tgz#65ac0504b3954171d8a64946b2ae3cbb8a5f54f6"
   dependencies:
     has-flag "^1.0.0"
+
+symbol-observable@^1.0.1:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.0.4.tgz#29bf615d4aa7121bdd898b22d4b3f9bc4e2aa03d"
 
 symbol-tree@^3.2.1:
   version "3.2.2"

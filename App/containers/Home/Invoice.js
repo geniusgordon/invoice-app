@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
   inputContainer: {
     height: 48,
     borderWidth: 1,
-    borderColor: GREY,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 5,
     paddingLeft: 8,
     paddingRight: 8,
     marginBottom: 8,
@@ -19,7 +20,6 @@ const styles = StyleSheet.create({
   input: {
     color: BLACK,
     fontSize: 16,
-    fontFamily: 'monospace',
   },
   time: { flexDirection: 'row' },
   year: { flex: 1, marginRight: 8 },
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   firstSerial: {
-    textAlign: 'center',
     fontFamily: 'monospace',
   },
   secondSerial: {
@@ -45,9 +44,8 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
   },
   submitButton: {
-    marginTop: 8,
-    marginLeft: 0,
-    marginRight: 0,
+    borderRadius: 32,
+    marginTop: 16,
   },
 });
 
@@ -188,8 +186,10 @@ class Invoice extends Component {
         </View>
         {edit
           ? <Button
+              large
               title="新增發票"
               disabled={firstSerial.length < 2 || secondSerial.length < 8}
+              borderRadius={32}
               backgroundColor={RED}
               onPress={this.handleSubmit}
               containerViewStyle={styles.submitButton}
