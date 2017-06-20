@@ -285,6 +285,7 @@ class Home extends Component {
         <Toolbar title={title} toolbarStyle={toolbarStyle} />
         <Animated.View
           style={[styles.mask, { backgroundColor: screenColor, opacity }]}
+          pointerEvents="none"
         />
         <Interactable.View
           horizontalOnly
@@ -308,7 +309,7 @@ class Home extends Component {
               onHistorySelect={onHistorySelect}
             />
           </Panel>
-          <View style={{ flex: 1 }} />
+          <View style={styles.container} pointerEvents="none" />
           <Panel>
             <Account
               user={user}
